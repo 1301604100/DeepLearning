@@ -17,7 +17,7 @@ im_width = 244
 
 # 训练集数据生成器，one-hot编码，打乱数据
 train_data_gen = image_generator.flow_from_directory(directory=train_path,
-                                                     batch_size=batch_size,
+                                                     # batch_size=batch_size,
                                                      shuffle=False,
                                                      target_size=(im_height, im_width),
                                                      class_mode='categorical')
@@ -25,28 +25,28 @@ train_data_gen = image_generator.flow_from_directory(directory=train_path,
                                                     
 # 测试集数据生成器，one-hot编码
 valid_data_gen = image_generator.flow_from_directory(directory=validation_path,
-                                                     batch_size=batch_size *10,
+                                                     # batch_size=batch_size *10,
                                                      shuffle=False,
                                                      target_size=(im_height, im_width),
                                                      class_mode='categorical')
                                                      
                                                      
 # 得到之后
-model = Sequential([ ... ])
+# model = Sequential([ ... ])
 
 # 训练时：
-steps_per_epoch = train_data_gen.n // train_data_gen.batch_size      #计算每个epoch要计算的图片个数
-history = model.fit(train_data_gen, 
-                   steps_per_epoch=steps_per_epoch,
-                    epochs=training_epoches, 
-                    verbose=1, shuffle=True)
+# steps_per_epoch = train_data_gen.n // train_data_gen.batch_size      #计算每个epoch要计算的图片个数
+# history = model.fit(train_data_gen,
+#                    steps_per_epoch=steps_per_epoch,
+#                     # epochs=training_epoches,
+#                     verbose=1, shuffle=True)
                     
 # 评价测试集
 steps = valid_data_gen.n // valid_data_gen.batch_size
-model.evaluate(valid_data_gen, steps=steps)
+# model.evaluate(valid_data_gen, steps=steps)
 
 # 或者采用
-model.predict(valid_data_gen)
+# model.predict(valid_data_gen)
 
 
 #
@@ -70,19 +70,19 @@ im_height = 224   # 需要把全部图片统一的 长与宽的尺寸，按实际要求设置
 im_width = 244
 
 # 训练集数据生成器，one-hot编码，注意，比方法1多了一个参数subset
-train_data_gen = image_generator.flow_from_directory(directory=image_path,
-                                                     batch_size=batch_size,
-                                                     shuffle=False,
-                                                     target_size=(im_height, im_width),
-                                                     class_mode='categorical',
-                                                     subset='training')
+# train_data_gen = image_generator.flow_from_directory(directory=image_path,
+#                                                      batch_size=batch_size,
+#                                                      shuffle=False,
+#                                                      target_size=(im_height, im_width),
+#                                                      class_mode='categorical',
+#                                                      subset='training')
 # 测试集数据生成器，one-hot编码
-valid_data_gen = image_generator.flow_from_directory(directory=image_path,
-                                                     batch_size=batch_size,
-                                                     shuffle=False,
-                                                     target_size=(im_height, im_width),
-                                                     class_mode='categorical',
-                                                     subset='validation')
+# valid_data_gen = image_generator.flow_from_directory(directory=image_path,
+#                                                      batch_size=batch_size,
+#                                                      shuffle=False,
+#                                                      target_size=(im_height, im_width),
+#                                                      class_mode='categorical',
+#                                                      subset='validation')
                                    
                                    
 # 模型的训练与测试评价与方法1一致
