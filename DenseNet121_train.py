@@ -44,7 +44,7 @@ def load_data():
 def get_model(class_num):
 
     # 使用官方的预训练模型
-    base_model = tf.keras.applications.DenseNet121(input_shape=(image_width, image_height, 3),   # 输入尺寸元组
+    base_model = tf.keras.applications.ResNet152V2(input_shape=(image_width, image_height, 3),   # 输入尺寸元组
                                                    include_top=False,     # 不包含顶层的全连接层
                                                    weights='imagenet')    # 表示使用官方预训练的权值
 
@@ -85,14 +85,14 @@ def train():
     # 开始训练
     history = model.fit(train_dataset, validation_data=val_dataset, epochs=epochs)
     # 保存训练模型
-    model.save("models/DenseNet121.h5")
+    model.save("models/ResNet152V2.h5")
     # 记录结束时间
     end_time = time()
     run_time = end_time - begin_time
     print("程序运行时间: ", run_time, "s")
 
     # 绘制模型训练过程图
-    draw(history, "DenseNet121")
+    draw(history, "ResNet152V2")
 
 
 if __name__ == '__main__':

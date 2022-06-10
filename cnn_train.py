@@ -1,7 +1,5 @@
 import tensorflow as tf
 from time import *
-import matplotlib.pyplot as plt
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from draw import draw
 
 # 指定数据位置

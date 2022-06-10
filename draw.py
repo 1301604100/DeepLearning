@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 
 
-
 # 画出损失曲线
 def draw(history, photo_name):
     # 从history中提取模型训练集和验证集准确率信息和误差信息
