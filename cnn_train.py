@@ -37,6 +37,8 @@ def load_data():
     # 返回处理之后的训练集、验证集和类名
     return train_dataset, val_dataset, class_names
 
+def load_data_generator():
+
 
 # 构建 CNN 模型
 def get_model(class_num):
