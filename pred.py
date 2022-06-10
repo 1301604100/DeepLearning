@@ -1,29 +1,83 @@
 import tensorflow as tf
 import numpy as np
-from tensorflow import keras
-from sklearn.metrics import confusion_matrix
 from cnn_train import load_data
+import matplotlib.pyplot as plt
+
+
+def show_heatmaps(title, x_labels, y_labels, harvest, save_name):
+    # 这里是创建一个画布
+    fig, ax = plt.subplots()
+
+    im = ax.imshow(harvest, cmap="Blues")
+
+    ax.set_xticks(np.arange(len(y_labels)))
+    ax.set_yticks(np.arange(len(x_labels)))
+
+    # 添加每个热力块的具体数值
+    for i in range(len(x_labels)):
+        for j in range(len(y_labels)):
+            text = ax.text(j, i, round(harvest[i, j], 2),
+                           ha="center", va="center", color="black")
+    ax.set_xlabel("Predict label")
+    ax.set_ylabel("Actual label")
+    ax.set_title(title)
+    fig.tight_layout()
+    plt.colorbar(im)
+    plt.savefig(save_name, dpi=100)
+    # plt.show()
 
 
 def predict(model_name):
-    def preprocess(x, y):  # 预处理代码
-        x = tf.cast(x, dtype=tf.float32) / 255.
-        return x, y
 
-    np.random.seed(2021)  # 固定随机因子
-    __, test_db, _ = load_data()
+    train_dataset, test_dataset, class_names = load_data()
 
-    test_db = test_db.batch(1000)
-    test_db = test_db.map(preprocess)  # 使用预处理程序
-    model = keras.models.load_model('./models/' + model_name, compile=False)  # 加载模型
-    model.summary()  # 展现模型结构
+    # 加载模型
+    model = tf.keras.models.load_model("models/" + model_name + ".h5")
+    model.summary()
 
-    y_predict = model.predict(test_db)  # 预测测试集
-    acc = keras.metrics.SparseCategoricalAccuracy()(y_test, y_predict)  # 计算准确率
-    # y_test是(10000, 1), y_pred是(10000, 10)独热编码
+    # 测试
+    loss, accuracy = model.evaluate(test_dataset)
 
-    y_predict = tf.argmax(y_predict, 1)  # 转换为预测标签
-    # (10000, )
-    cm = confusion_matrix(y_test, y_predict)  # 混淆矩阵
-    print(cm)  # 输出混淆矩阵
-    # plotcm(cm)  # 绘制混淆矩阵, 自定义
+    # 输出结果
+    print('test accuracy :', accuracy)
+
+    test_real_labels = []  # 真实结果类名
+    test_pre_labels = []   # 测试结果类名
+    for test_batch_images, test_batch_labels in test_dataset:
+        test_batch_labels = test_batch_labels.numpy()
+        test_batch_pres = model.predict(test_batch_images)
+        # print(test_batch_pres)
+
+        test_batch_labels_max = np.argmax(test_batch_labels, axis=1)
+        test_batch_pres_max = np.argmax(test_batch_pres, axis=1)
+        # print(test_batch_labels_max)
+        # print(test_batch_pres_max)
+        # 将推理对应的标签取出
+        for i in test_batch_labels_max:
+            test_real_labels.append(i)
+
+        for i in test_batch_pres_max:
+            test_pre_labels.append(i)
+        # break
+
+    # print(test_real_labels)
+    # print(test_pre_labels)
+    class_names_length = len(class_names)
+    heat_maps = np.zeros((class_names_length, class_names_length))
+    for test_real_label, test_pre_label in zip(test_real_labels, test_pre_labels):
+        heat_maps[test_real_label][test_pre_label] = heat_maps[test_real_label][test_pre_label] + 1
+
+    print(heat_maps)
+    heat_maps_sum = np.sum(heat_maps, axis=1).reshape(-1, 1)
+    # print(heat_maps_sum)
+    print()
+    heat_maps_float = heat_maps / heat_maps_sum
+    print(heat_maps_float)
+    # title, x_labels, y_labels, harvest
+    show_heatmaps(title="heatmap", x_labels=class_names, y_labels=class_names, harvest=heat_maps_float,
+                  save_name="results/heatmap_"+ model_name +".png")
+
+
+if __name__ == '__main__':
+    predict("monkey_cnn")
+    predict("ResNet152V2")
