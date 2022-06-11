@@ -1,6 +1,6 @@
 import tensorflow as tf
 from time import *
-import matplotlib.pyplot as plt
+
 
 # 指定数据位置
 from draw import draw

@@ -11,7 +11,8 @@ __pycache__/
 .Python
 data/
 models/
-results/
+#results/
+.idea/
 build/
 develop-eggs/
 dist/
