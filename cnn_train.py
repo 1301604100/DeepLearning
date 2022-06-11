@@ -105,27 +105,6 @@ def train():
     print("程序运行时间: ", run_time, "s")
 
     # 绘制模型训练过程图
-    draw(history)
-    # 开始训练，记录开始时间
-    begin_time = time()
-    # 获取数据
-    train_dataset, val_dataset, class_names = load_data()
-
-    # 输出标签
-    # print(class_names)
-
-    # 构建cnn模型
-    model = get_model(len(class_names))
-    # 开始训练
-    history = model.fit(train_dataset, validation_data=val_dataset, epochs=epochs)
-    # 保存训练模型
-    model.save("models/monkey_cnn.h5")
-    # 记录结束时间
-    end_time = time()
-    run_time = end_time - begin_time
-    print("程序运行时间: ", run_time, "s")
-
-    # 绘制模型训练过程图
     draw(history, "cnn")
 
 

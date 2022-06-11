@@ -1,13 +1,12 @@
 import tensorflow as tf
 import numpy as np
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from cnn_train import load_data
 import matplotlib.pyplot as plt
 
 plt.rcParams['font.sans-serif'] = ['Microsoft YaHei']
 
 
+# 热力图
 def show_heatmaps(x_labels, y_labels, cm, save_name):
     # 创建一个画布
     fig, ax = plt.subplots()
@@ -47,12 +46,20 @@ def predict(model_name):
 
     test_real_labels = []  # 真实结果类名
     test_pre_labels = []  # 测试结果类名
+    flag = True
+
     for test_images, test_labels in test_dataset:
         test_labels = test_labels.numpy()  # 取出类名数组  0  1
         test_pres = model.predict(test_images)  # 进行预测
 
+        # print(test_images[0])
+
         test_labels_max = np.argmax(test_labels, axis=1)  # 取出最大值所对应的索引
         test_pres_max = np.argmax(test_pres, axis=1)  # 取出最大值所对应的索引
+
+        if flag:
+            # 找出错误分类
+            flag = draw_mis_classification(test_labels_max, test_pres_max, test_images, model_name)
 
         # 取出真实结果的类名
         for i in test_labels_max:
@@ -78,22 +85,8 @@ def predict(model_name):
     # 测试集数量
     n = len(test_real_labels)
 
-    # https://blog.csdn.net/qwe1110/article/details/103391632
-    t = p = r = 0
-    for i in range(class_names_length):
-        temp_p1 = temp_p2 = temp_r = 0
-        for j in range(class_names_length):
-            if i == j:
-                t += cm[i][j]
-                temp_p2 = cm[i][j]
-            temp_p1 += cm[j][i]
-            temp_r += cm[i][j]
-        p += (temp_p2 / temp_p1)
-        r += (temp_p2 / temp_r)
-    print("准确度acc:", t / n)
-    print("精确度p:", p / class_names_length)
-    print("召回率r:", r / class_names_length)
-    # print("f1:", 2 * p * r / (p + r))
+    # 计算评价指标
+    evaluating_indicator(cm, class_names_length, n)
 
     print()
     # 获得概率的混淆矩阵
@@ -105,6 +98,70 @@ def predict(model_name):
                   y_labels=class_names,
                   cm=cm_float,
                   save_name="results/heatmap_" + model_name + ".png")
+
+
+# 计算评价指标
+def evaluating_indicator(cm, length, n):
+    # cm      混淆矩阵
+    # length  分类数量
+    # n       测试集数
+
+    # https://blog.csdn.net/qwe1110/article/details/103391632
+    t = p = r = 0
+    for i in range(length):
+        temp_p1 = temp_p2 = temp_r = 0
+        for j in range(length):
+            if i == j:
+                t += cm[i][j]
+                temp_p2 = cm[i][j]
+            temp_p1 += cm[j][i]
+            temp_r += cm[i][j]
+        p += (temp_p2 / temp_p1)
+        r += (temp_p2 / temp_r)
+    print("准确度acc:", t / n)
+    print("精确度p:", p / length)
+    print("召回率r:", r / length)
+
+
+# 画出错分样例图
+def draw_mis_classification(test_labels_max, test_pres_max, test_images, photo_name):
+    # classes = ['bald_uakari', 'black_headed_night_monkey', 'common_squirrel_monkey', 'japanese_macaque',
+    #            'mantled_howler', 'nilgiri_langur', 'patas_monkey', 'pygmy_marmoset', 'silvery_marmoset',
+    #            'white_headed_capuchin']
+
+    classes = ['白秃猴', '黑夜猴', '松鼠猴', '日本猕猴', '鬃毛吼猴', '尼尔吉里叶猴', '红猴', '侏儒狨猴', '银毛猴', '白头卷尾猴']
+
+    img_label_true = []  # 正确的类名
+    img_label_error = []  # 预测错误的类名
+    img_error = []  # 预测错误的图片
+
+    # 没找到错误的就继续
+    if len(img_error) <= 0: return True
+
+    # 找出错误分类
+    for i, val in enumerate(test_labels_max):
+        if test_labels_max[i] != test_pres_max[i]:
+            img_label_true.append(test_labels_max[i])
+            img_label_error.append(test_pres_max[i])
+            img_error.append(test_images[i])
+
+    # 显示的图片数
+    show_img_count = 8
+    error_label_len = len(img_label_error)
+    num_for_paint = (error_label_len, show_img_count)[error_label_len > show_img_count]
+
+    plt.figure()
+    for i in range(num_for_paint):
+        # 转换成数组
+        numpy_out = np.array(img_error[i])
+
+        plt.subplot(2, 4, i + 1, xticks=[], yticks=[])  # 2 * 4子图显示
+        plt.imshow(numpy_out.astype(np.uint8))
+        plt.title(f'{classes[img_label_true[i]]} --> \n {classes[img_label_error[i]]}')  # 显示标题
+        plt.subplots_adjust(wspace=0.3, hspace=0.2)  # 调整子图间距
+    plt.savefig('results/' + photo_name + '_error_label.png', dpi=100)
+    # plt.show()
+    return False
 
 
 if __name__ == '__main__':
