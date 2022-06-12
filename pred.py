@@ -129,7 +129,7 @@ def draw_mis_classification(test_labels_max, test_pres_max, test_images, photo_n
     #            'mantled_howler', 'nilgiri_langur', 'patas_monkey', 'pygmy_marmoset', 'silvery_marmoset',
     #            'white_headed_capuchin']
 
-    classes = ['白秃猴', '黑夜猴', '松鼠猴', '日本猕猴', '鬃毛吼猴', '尼尔吉里叶猴', '红猴', '侏儒狨猴', '银毛猴', '白头卷尾猴']
+    classes = ['赤秃猴', '黑夜猴', '松鼠猴', '日本猕猴', '鬃毛吼猴', '尼尔吉里叶猴', '红猴', '侏儒狨猴', '银毛猴', '白头卷尾猴']
 
     img_label_true = []  # 正确的类名
     img_label_error = []  # 预测错误的类名
