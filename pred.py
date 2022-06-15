@@ -122,6 +122,19 @@ def evaluating_indicator(cm, length, n):
     print("精确度p:", p / length)
     print("召回率r:", r / length)
 
+    # temp_pppp = temp_rrrr = 0
+    # n = len(cm)
+    # for i in range(n):
+    #     rowsum, colsum = sum(cm[i]), sum(cm[r][i] for r in range(n))
+    #     try:
+    #         print('precision: %s' % (cm[i][i] / float(colsum)), 'recall: %s' % (cm[i][i] / float(rowsum)))
+    #         temp_pppp += (cm[i][i] / float(colsum))
+    #         temp_rrrr += (cm[i][i] / float(rowsum))
+    #     except ZeroDivisionError:
+    #         print('precision: %s' % 0, 'recall: %s' % 0)
+    # print("pppp: %s" % temp_pppp)
+    # print("rrrr: %s" % temp_rrrr)
+
 
 # 画出错分样例图
 def draw_mis_classification(test_labels_max, test_pres_max, test_images, photo_name):

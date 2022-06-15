@@ -40,7 +40,7 @@ def load_data():
     return train_dataset, val_dataset, class_names
 
 
-# 构建 CNN 模型
+# 构建 ResNet152V2 模型
 def get_model(class_num):
 
     # 使用官方的预训练模型
